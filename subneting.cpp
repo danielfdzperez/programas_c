@@ -1,7 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void comprobar_parametros(int argc, char *argv[]){
+    if(argc < 9){
+	fprintf(stderr,"Uso: %s <ip separada por espacios> <mascara separada por espacios>\n", argv[0]);
+	exit(EXIT_FAILURE);
+    }
+}
+
 int main(int argc, char *argv[]){
+
+    comprobar_parametros(argc, argv);
+    
     int numero[4],
 	mascara[4],
 	red[4];
