@@ -130,7 +130,6 @@ int main (int argc, char *argv[]){
 		ip[3] = broadcast - (255 - ip[3]);
 		ip[2] ++;
 	    }
-
 	    
 	printf("----------- broadcast: ");
 	for(int red=0; red<4; red ++)
