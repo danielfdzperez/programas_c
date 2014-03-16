@@ -121,13 +121,16 @@ int main (int argc, char *argv[]){
 	    else
 		printf("%i ",ip[red]);
 
-	for(int octetos=3; octetos>=octetos_editables; octetos--)
-	    if(ip[octetos] + broadcast < 255){
-		ip[octetos] += broadcast;
-		break;
+	//for(int octetos=3; octetos>=octetos_editables; octetos--)
+	    if(ip[3] + broadcast <= 255){
+		ip[3] += broadcast;
+		//break;
 	    }
-	    else
-		ip[octetos] = 0;
+	    else{	 
+		ip[3] = broadcast - (255 - ip[3]);
+		ip[2] ++;
+	    }
+
 	    
 	printf("----------- broadcast: ");
 	for(int red=0; red<4; red ++)
