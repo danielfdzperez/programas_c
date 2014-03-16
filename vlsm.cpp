@@ -2,52 +2,169 @@
 #include <stdlib.h>
 #include <math.h>
 
-int main (int argc, char *argv[]){
-    int ip[4],
-	mascara_subred[4],
-	clase,
-	bit_host[20],
-	intermediario,
-	redes,
-	mascara_abrebiada;
+void  pedir_host_red(int intermediario, int *redes, int bit_host[]){
+    //Pide los host por red
 
-    redes = 0;
-    intermediario = 0;
-    mascara_abrebiada = 32;
-
-    printf("Introduzca la IP: ");
-    scanf(" %i.%i.%i.%i", &ip[0], &ip[1], &ip[2], &ip[3]);
-
-    //
     for(int pedir_host=0; intermediario != -1; pedir_host ++){
 	printf("Introduzca la cantidad de host de red: ");
 	scanf(" %i", &intermediario);
 	if(intermediario > 0){
 	    bit_host[pedir_host] = intermediario;
-	    redes++;
+	    (*redes)++;
 	}
     }
 
-    for(int bits=0; bits<redes; bits++)
-	for(int numero_bits=1; numero_bits<=8; numero_bits++)
-	    if(bit_host[bits] < exp2 (numero_bits)){
-		bit_host[bits] = numero_bits;
-		break;
-	    }
-    printf("1º red: %i.%i.%i.%i/%i ", ip[0], ip[1], ip[2],
-	    ip[3], mascara_abrebiada - bit_host[0]);
-    printf("Bro:%i.%i.%i.%i", ip[0], ip[1], ip[2], ip[3]+exp2(bit_host[0]));
+}
+void seleccion_de_red(int suma_bits, int ip[], int octetos_editables){
 
-    //comprueba a que clase pertenece la ip introducida por el usuario
-    if(ip[0]<128)
-	clase = 1;
+    if(suma_bits <= exp2 (8) - 2){
+	//printf("Clase C\n");
+	ip[0] = 192;
+	ip[1] = 168;
+	ip[2] = 1;
+	ip[3] = 0;
+	octetos_editables = 3;
+    }
     else
-	if(ip[0]<192) 
-	    clase = 2;
+	if(suma_bits <= exp2 (16) - 2){
+	  //  printf("Clase B\n");
+	    ip[0] = 172;
+	    ip[1] = 16;
+	    ip[2] = 0;
+	    ip[3] = 0;
+	    octetos_editables = 2;
+
+	}
+	else{
+	    //printf("Clase A\n");
+	    ip[0] = 10;
+	    ip[1] = 0;
+	    ip[2] = 0;
+	    ip[3] = 0;
+	    octetos_editables = 1;
+
+	}
+
+}
+void calcular_bits_host_por_red(int bit_host[], int redes, int *suma_bits, int host_red[]){
+
+    for(int calculo = 0; calculo<redes; calculo ++){
+	bool bits_encontrados=false;
+	for(int exponente=0; bits_encontrados!=true; exponente++)
+	    if(bit_host[calculo] <= (exp2 (exponente)) - 2 ){
+		bit_host[calculo] = exponente;
+		host_red[calculo] = exp2 (exponente) - 2;
+		bits_encontrados = true;
+	    }
+    }
+    //suma el total de bits 
+    for(int suma = 0; suma < redes; suma ++)
+	(*suma_bits) += exp2 (bit_host[suma]) - 2;
+}
+void calcular_mascara_subred(int mascara_abrebiada[], int mascara[]){
+
+    int calcular_mascara = 0,
+	mascara_temporal;
+
+    mascara_temporal = mascara_abrebiada[calcular_mascara];
+    for(int restar=0; mascara_temporal >0; restar++){
+
+	if(mascara_temporal> 8){
+	    mascara_temporal -= 8;
+	    for(int expo=0; expo<8; expo++)
+		mascara[restar] += exp2 (expo);
+	}
+	else{
+	    for(int expo=7; expo>=8-mascara_temporal; expo--)
+		mascara[restar] += exp2(expo);
+	   mascara_temporal -= mascara_temporal;
+	}
+    }
+
+}
+
+int main (int argc, char *argv[]){
+    int ip[4],
+	mascara_subred[4],
+	clase,
+	octetos_editables;
+
+    int	bit_host[20],
+	suma_bits,
+	host_red[20],
+	intermediario,
+	redes,
+	mascara_abrebiada[21],
+	mascara[]={0,0,0,0};
+
+    redes = 0;
+    intermediario = 0;
+    suma_bits = 0;
+
+    pedir_host_red(intermediario, &redes, bit_host);
+
+    calcular_bits_host_por_red(bit_host, redes, &suma_bits, host_red);
+
+    seleccion_de_red(suma_bits, ip, octetos_editables);
+
+    for(int x=0; x<redes; x++)
+	mascara_abrebiada[x] = 32 - bit_host[x];
+
+    calcular_mascara_subred( mascara_abrebiada, mascara); 
+
+
+    int broadcast = host_red[0] + 1;
+    printf("Dierccion 1ª red: ");
+    for(int red=0; red<4; red ++)
+	if(red != 3)
+	    printf("%i.",ip[red]);
 	else
-	    clase = 3;
+	    printf("%i ",ip[red]);
+    /*printf("Dierccion 1º host: ");
+    for(int red=0; red<4; red ++)
+	if(red != 3)
+	    printf("%i.",ip[red]);
+	else
+	    printf("%i ",ip[red]+1);
+    printf("Dierccion ultimo host: ");
+    for(int red=0; red<4; red ++)
+	if(red != 3)
+	    printf("%i.",ip[red]);
+	else
+	    printf("%i ",ip[red]+broadcast - 1);*/
+    printf("Dierccion broadcast: ");
+    for(int red=0; red<4; red ++)
+	if(red != 3)
+	    printf("%i.",ip[red]);
+	else
+	    printf("%i ",ip[red]+broadcast);
+    printf("\n");
+
+    /*for(int mostrar_redes=1; mostrar_redes<redes; mostrar_redes++)
+	for(int octetos=4; octetos>octetos_editables; octetos--)
+	    if((ip[octetos] + broadcast + 1) < 255)*/
+		
 
 
+
+
+
+
+    /*//comprobaciones
+      printf("Bits por red\n");
+      for(int x=0; x<redes; x++)
+      printf(" %i /%i %i --", bit_host[x], mascara_abrebiada[x], host_red[x]);
+      printf("\n");
+
+      printf("Direccion de red\n");
+      for(int x=0; x<4; x++)
+      printf("%i.", ip[x]);
+      printf("/%i\n", mascara_abrebiada[0]);
+
+      printf("Numero total de bits de host \n %i \n", suma_bits);
+
+      printf("bit: %i, /%i, mas: %i.%i.%i.%i\n", bit_host[0], mascara_abrebiada[0], mascara[0], mascara[1], mascara[2], mascara[3]);
+     */
 
     return EXIT_SUCCESS;
 }
