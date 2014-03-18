@@ -61,27 +61,6 @@ void calcular_bits_host_por_red(int bit_host[], int redes, int *suma_bits, int h
     for(int suma = 0; suma < redes; suma ++)
 	(*suma_bits) += exp2 (bit_host[suma]) - 2;
 }
-void calcular_mascara_subred(int mascara_abrebiada, int mascara[]){
-
-    int mascara_temporal;
-    for(int reiniciar=0; reiniciar<4; reiniciar++)
-	mascara[reiniciar] = 0;
-    mascara_temporal = mascara_abrebiada;
-    for(int restar=0; mascara_temporal >0; restar++){
-
-	if(mascara_temporal> 8){
-	    mascara_temporal -= 8;
-	    for(int expo=0; expo<8; expo++)
-		mascara[restar] += exp2 (expo);
-	}
-	else{
-	    for(int expo=7; expo>=8-mascara_temporal; expo--)
-		mascara[restar] += exp2(expo);
-	    mascara_temporal -= mascara_temporal;
-	}
-    }
-
-}
 
 int main (int argc, char *argv[]){
     int ip[4],
@@ -122,15 +101,15 @@ int main (int argc, char *argv[]){
 		printf("%i ",ip[red]);
 
 	//for(int octetos=3; octetos>=octetos_editables; octetos--)
-	    if(ip[3] + broadcast <= 255){
-		ip[3] += broadcast;
-		//break;
-	    }
-	    else{	 
-		ip[3] = broadcast - (255 - ip[3]);
-		ip[2] ++;
-	    }
-	    
+	if(ip[3] + broadcast <= 255){
+	    ip[3] += broadcast;
+	    //break;
+	}
+	else{	 
+	    ip[3] = broadcast - (255 - ip[3]);
+	    ip[2] ++;
+	}
+
 	printf("----------- broadcast: ");
 	for(int red=0; red<4; red ++)
 	    if(red != 3)
@@ -148,22 +127,6 @@ int main (int argc, char *argv[]){
 	printf("\n");
 
     }
-
-    /*//comprobaciones
-      printf("Bits por red\n");
-      for(int x=0; x<redes; x++)
-      printf(" %i /%i %i --", bit_host[x], mascara_abrebiada[x], host_red[x]);
-      printf("\n");
-
-      printf("Direccion de red\n");
-      for(int x=0; x<4; x++)
-      printf("%i.", ip[x]);
-      printf("/%i\n", mascara_abrebiada[0]);
-
-      printf("Numero total de bits de host \n %i \n", suma_bits);
-
-      printf("bit: %i, /%i, mas: %i.%i.%i.%i\n", bit_host[1], mascara_abrebiada[1], mascara[0], mascara[1], mascara[2], mascara[3]);
-     */
 
     return EXIT_SUCCESS;
 }
