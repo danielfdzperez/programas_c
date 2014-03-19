@@ -116,8 +116,11 @@ int main (int argc, char *argv[]){
     for(int mostrar_redes=0; mostrar_redes<redes; mostrar_redes++){
 	calcular_mascara_subred(mascara_abrebiada[mostrar_redes], mascara);
 
-	//for(int red=0; red<octetos_editables; red++)
-	    broadcast = (mascara[3] ^ 255) + ip[0];
+
+	for(int red=3; red>=octetos_editables; red--){
+	    mascara[red] ^= 255;
+	    mascara[red] += ip[red];
+	}
 
 	printf("red: ");
 	for(int red=0; red<4; red ++)
@@ -127,7 +130,8 @@ int main (int argc, char *argv[]){
 		printf("%i ",ip[red]);
 
 	//asignar el broadcas al ultimo octeto.
-	ip[3] += mascara[3];
+	for(int red=3; red>=octetos_editables; red--)
+	    ip[red] = mascara[red];
 
 	printf("----------- broadcast: ");
 	for(int red=0; red<4; red ++)
