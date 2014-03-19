@@ -65,7 +65,6 @@ void calcular_bits_host_por_red(int bit_host[], int redes, int *suma_bits, int h
 void calcular_mascara_subred(int mascara_abrebiada, int mascara[]){
     
     int mascara_temporal;
-    mascara_abrebiada = 30;
     for(int reiniciar=0; reiniciar<4; reiniciar++)
 	mascara[reiniciar] = 0;
     mascara_temporal = mascara_abrebiada;
@@ -117,8 +116,8 @@ int main (int argc, char *argv[]){
     for(int mostrar_redes=0; mostrar_redes<redes; mostrar_redes++){
 	calcular_mascara_subred(mascara_abrebiada[mostrar_redes], mascara);
 
-	for(int red=0; red<octetos_editables; red++)
-	    broadcast = (mascara[red] ^ 255) + ip[red];
+	//for(int red=0; red<octetos_editables; red++)
+	    broadcast = (mascara[3] ^ 255) + ip[0];
 
 	printf("red: ");
 	for(int red=0; red<4; red ++)
@@ -126,6 +125,8 @@ int main (int argc, char *argv[]){
 		printf("%i.",ip[red]);
 	    else
 		printf("%i ",ip[red]);
+
+	//asignar el broadcas al ultimo octeto.
 	ip[3] += mascara[3];
 
 	printf("----------- broadcast: ");
