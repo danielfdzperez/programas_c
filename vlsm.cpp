@@ -84,35 +84,9 @@ void calcular_mascara_subred(int mascara_abrebiada, int mascara[]){
 
 }
 
-int main (int argc, char *argv[]){
-    int ip[4],
-	mascara_subred[4],
-	clase,
-	octetos_editables;
+void iprimir_redes(int redes,int mascara_abrebiada[],int mascara[],int ip[], 
+	int octetos_editables){
 
-    int	bit_host[20],
-	suma_bits,
-	host_red[20],
-	intermediario,
-	redes,
-	mascara_abrebiada[21],
-	mascara[]={0,0,0,0};
-
-    redes = 0;
-    intermediario = 0;
-    suma_bits = 0;
-
-    pedir_host_red(intermediario, &redes, bit_host);
-
-    calcular_bits_host_por_red(bit_host, redes, &suma_bits, host_red, mascara_abrebiada);
-
-    seleccion_de_red(suma_bits, ip, &octetos_editables);
-
-    
-    for(int x=0; x<redes; x++)
-	mascara_abrebiada[x] = 32 - bit_host[x];
-
-    int broadcast;
     for(int mostrar_redes=0; mostrar_redes<redes; mostrar_redes++){
 	calcular_mascara_subred(mascara_abrebiada[mostrar_redes], mascara);
 
@@ -150,6 +124,37 @@ int main (int argc, char *argv[]){
 	printf("\n");
 
     }
+}
+
+int main (int argc, char *argv[]){
+    int ip[4],
+	mascara_subred[4],
+	clase,
+	octetos_editables;
+
+    int	bit_host[20],
+	suma_bits,
+	host_red[20],
+	intermediario,
+	redes,
+	mascara_abrebiada[21],
+	mascara[]={0,0,0,0};
+
+    redes = 0;
+    intermediario = 0;
+    suma_bits = 0;
+
+    pedir_host_red(intermediario, &redes, bit_host);
+
+    calcular_bits_host_por_red(bit_host, redes, &suma_bits, host_red, mascara_abrebiada);
+
+    seleccion_de_red(suma_bits, ip, &octetos_editables);
+
+
+    for(int x=0; x<redes; x++)
+	mascara_abrebiada[x] = 32 - bit_host[x];
+
+    iprimir_redes(redes, mascara_abrebiada, mascara, ip, octetos_editables);
 
     return EXIT_SUCCESS;
 }
