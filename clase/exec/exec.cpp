@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <string.h>
 
 void mostrar_menu(){
     printf("Ejemplo exec:\n\
@@ -12,7 +13,6 @@ void mostrar_menu(){
 
 int spawn(const char * programa, char **argumentos){
     pid_t pid_hijo = 0;
-
     pid_hijo = fork();
 
     if(pid_hijo != 0)
@@ -26,15 +26,18 @@ int spawn(const char * programa, char **argumentos){
 
 int main(int argc, char * argv[]){
     int respuesta;
-    char *argumentos[] = {
-	"www.google.es",
-	NULL
-    };
+    char argumentos[10][20];
     mostrar_menu();
     scanf("%i", &respuesta);
     switch(respuesta){
 	case 1: 
-	    spawn("firefox", argumentos);
+	    for(int i=0; i<2; i++){
+		int byte;
+		byte = scanf(" %s", argumentos[i]);
+		printf("%i\n", byte);
+		argumentos[5] = NULL;
+	    }
+	    //spawn("firefox", argumentos);
 	    break;
 	case 2:
 	    printf("ls\n");
