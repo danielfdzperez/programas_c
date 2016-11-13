@@ -35,13 +35,13 @@ int main(int argc, char *argv[]){
 		break;
 	}
 
-    if(imprimir_ayuda == true){
+    if(imprimir_ayuda){
 	imprimir_uso(argv[0]);
         ayuda_impresa = true;
     }
 
     if(argc - optind < 8){
-	if(ayuda_impresa == false)
+	if(!ayuda_impresa)
 	    imprimir_uso(argv[0]);
 	return EXIT_FAILURE;
     }
